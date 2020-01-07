@@ -30,4 +30,5 @@ function main(){
     canvas.addEventListener('mousedown', start)
     canvas.addEventListener('mousemove', draw)
     canvas.addEventListener('mouseup', end)
+    canvas.addEventListener('mouseleave', end)
 }

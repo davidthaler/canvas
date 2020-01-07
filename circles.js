@@ -36,7 +36,8 @@ function withinDist(x, y, d){
 
 function removeNode(e){
     if(btnState == 'removeNode'){
-        let nIdx = withinDist(e.x, e.y, RADIUS)
+        let [x, y] = shiftXY(e.x, e.y)
+        let nIdx = withinDist(x, y, RADIUS)
         if(nIdx != -1){
             console.log(`found node: ${nIdx}`)
             nodes.splice(nIdx, 1)
@@ -47,11 +48,16 @@ function removeNode(e){
 
 function addNode(e){
     if(btnState == 'addNode'){
-        if(withinDist(e.x, e.y, 2 * RADIUS) == -1){
-            nodes.push({x:e.x, y:e.y})
+        let [x, y] = shiftXY(e.x, e.y)
+        if(withinDist(x, y, 2 * RADIUS) == -1){
+            nodes.push({x, y})
             drawNodes()
         }
     }
+}
+
+function shiftXY(x, y){
+    return [x - canvas.offsetLeft, y - canvas.offsetTop]
 }
 
 function main(){

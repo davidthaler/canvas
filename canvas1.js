@@ -1,34 +1,28 @@
 /*
-About the simplest sketching program you can imagine...
+About the simplest sketching program I can think of.
 */
-window.onload = main;
-
-let canvas, ctx, penDown;
+let canvas, context;
 
 function start(e){
-    ctx.beginPath()
-    ctx.moveTo(e.x, e.y)
-    penDown = true
+    context.beginPath()
+    context.moveTo(e.x, e.y)
+    canvas.addEventListener('mousemove', draw)
 }
 
 function draw(e){
-    if(penDown){
-        ctx.lineTo(e.x, e.y)
-        ctx.stroke()
-    }
+    context.lineTo(e.x, e.y)
+    context.stroke()
 }
 
 function end(e){
-    ctx.closePath()
-    penDown = false
+    context.closePath()
+    canvas.removeEventListener('mousemove', draw)
 }
 
-function main(){
+window.onload = function (){
     canvas = document.querySelector('canvas')
-    ctx = canvas.getContext('2d')
-    penDown = false;
+    context = canvas.getContext('2d')
     canvas.addEventListener('mousedown', start)
-    canvas.addEventListener('mousemove', draw)
     canvas.addEventListener('mouseup', end)
     canvas.addEventListener('mouseleave', end)
 }

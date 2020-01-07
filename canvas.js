@@ -3,14 +3,20 @@ About the simplest sketching program I can think of.
 */
 let canvas, context;
 
+function shiftXY(x, y){
+    return [x - canvas.offsetLeft, y - canvas.offsetTop]
+}
+
 function start(e){
     context.beginPath()
-    context.moveTo(e.x, e.y)
+    let [x, y] = shiftXY(e.x, e.y)
+    context.moveTo(x, y)
     canvas.addEventListener('mousemove', draw)
 }
 
 function draw(e){
-    context.lineTo(e.x, e.y)
+    let [x, y] = shiftXY(e.x, e.y)
+    context.lineTo(x, y)
     context.stroke()
 }
 

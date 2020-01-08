@@ -4,7 +4,7 @@ First step towards GraphMaker on canvas: adding nodes/circles.
 window.onload = main
 
 const RADIUS = 10
-let canvas, ctx, btnState
+let canvas, ctx, btnState, activeNode
 let nodes = []
 
 let stateColor = {
@@ -39,7 +39,6 @@ function removeNode(e){
         let [x, y] = shiftXY(e.x, e.y)
         let nIdx = withinDist(x, y, RADIUS)
         if(nIdx != -1){
-            console.log(`found node: ${nIdx}`)
             nodes.splice(nIdx, 1)
             drawNodes()
         }   
@@ -56,6 +55,33 @@ function addNode(e){
     }
 }
 
+function dragStart(e){
+    if(btnState == 'moveNode'){
+        let [x, y] = shiftXY(e.x, e.y)
+        let nIdx = withinDist(x, y, RADIUS)
+        if(nIdx != -1){
+            activeNode = nodes[nIdx]
+            canvas.addEventListener('mousemove', drag)
+            canvas.addEventListener('mouseup', dragEnd)
+            canvas.addEventListener('mouseleave', dragEnd)
+        }
+    }
+}
+
+function drag(e){
+    let [x, y] = shiftXY(e.x, e.y)
+    activeNode.x = x
+    activeNode.y = y
+    drawNodes()
+}
+
+function dragEnd(e){
+    activeNode = undefined
+    canvas.removeEventListener('mousemove', drag)
+    canvas.removeEventListener('mouseup', dragEnd)
+    canvas.removeEventListener('mouseleave', dragEnd)
+}
+
 function shiftXY(x, y){
     return [x - canvas.offsetLeft, y - canvas.offsetTop]
 }
@@ -67,6 +93,7 @@ function main(){
     ctx.fillStyle = 'lightgray'
     canvas.addEventListener('click', removeNode)
     canvas.addEventListener('click', addNode)
+    canvas.addEventListener('mousedown', dragStart)
     document.querySelectorAll('input').forEach(b => 
         b.addEventListener('change', function(){
                 btnState=this.value

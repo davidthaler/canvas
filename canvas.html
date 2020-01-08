@@ -6,11 +6,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Simple Canvas Drawing</title>
         <style>
+            body{font-family: Arial, Helvetica, sans-serif;}
             canvas{border: 1px solid gray;}
+            input{margin-right: 1rem;}
         </style>
         <script src="canvas.js"></script>
     </head>
     <body>
-        <canvas width=600 height=450></canvas>
+        <div>
+            <canvas width=600 height=450></canvas>
+        </div>
+        <div>
+            <label for="picker">Color:</label>
+            <input id="picker" type="color" value="#000000">
+            <label for="widthSelector">Line Width: </label>
+            <input id="widthSelector" type="range" 
+                min="1" step="0.5" max="5" value="1">
+            <span id="widthDisplay">1</span>
+        </div>
     </body>
 </html>

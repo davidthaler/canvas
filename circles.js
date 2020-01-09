@@ -28,6 +28,7 @@ function drawEdge(edge){
     ctx.stroke()
 }
 
+// NB: this clears the canvas, it does not replace the graph
 function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
@@ -94,9 +95,8 @@ function dragStart(e){
 }
 
 function drag(e){
-    let [x, y] = shiftXY(e.x, e.y)
-    activeNode.x = x
-    activeNode.y = y
+    activeNode.x += e.movementX
+    activeNode.y += e.movementY
     drawGraph()
 }
 

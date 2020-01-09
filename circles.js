@@ -6,17 +6,25 @@ window.onload = main
 const RADIUS = 10
 let canvas, ctx, btnState, activeNode
 let nodes = []
+let edges = []
 
 let stateColor = {
     'normal'   : {'fill': 'lightgray', 'stroke': 'darkgray'},
     'selected' : {'fill': 'whitesmoke', 'stroke': 'gray'}
 }
 
-function drawCircle(c){
+function drawNode(node){
     ctx.beginPath()
-    ctx.moveTo(c.x + RADIUS, c.y)
-    ctx.arc(c.x, c.y, RADIUS, 0, 2 * Math.PI)
+    ctx.moveTo(node.x + RADIUS, node.y)
+    ctx.arc(node.x, node.y, RADIUS, 0, 2 * Math.PI)
     ctx.fill()
+    ctx.stroke()
+}
+
+function drawEdge(edge){
+    ctx.beginPath()
+    ctx.moveTo(edge.s.x, edge.s.y)
+    ctx.lineTo(edge.t.x, edge.t.y)
     ctx.stroke()
 }
 
@@ -24,9 +32,10 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
-function drawNodes(){
+function drawGraph(){
     clearCanvas()
-    nodes.forEach(drawCircle)
+    edges.forEach(drawEdge)
+    nodes.forEach(drawNode)
 }
 
 //Returns index in nodes of first node within distance d of point x, y
@@ -40,7 +49,7 @@ function removeNode(e){
         let nIdx = withinDist(x, y, RADIUS)
         if(nIdx != -1){
             nodes.splice(nIdx, 1)
-            drawNodes()
+            drawGraph()
         }   
     }
 }
@@ -50,7 +59,23 @@ function addNode(e){
         let [x, y] = shiftXY(e.x, e.y)
         if(withinDist(x, y, 2 * RADIUS) == -1){
             nodes.push({x, y})
-            drawNodes()
+            drawGraph()
+        }
+    }
+}
+
+function addEdge(e){
+    if(btnState != 'addEdge') return
+    let [x, y] = shiftXY(e.x, e.y)
+    let nIdx = withinDist(x, y, RADIUS)
+    if(nIdx != -1){
+        if(activeNode == undefined){
+            activeNode = nodes[nIdx]
+        }else{
+            // no checks for now
+            edges.push({s:activeNode, t:nodes[nIdx]})
+            activeNode = undefined
+            drawGraph()
         }
     }
 }
@@ -72,7 +97,7 @@ function drag(e){
     let [x, y] = shiftXY(e.x, e.y)
     activeNode.x = x
     activeNode.y = y
-    drawNodes()
+    drawGraph()
 }
 
 function dragEnd(e){
@@ -93,6 +118,7 @@ function main(){
     ctx.fillStyle = 'lightgray'
     canvas.addEventListener('click', removeNode)
     canvas.addEventListener('click', addNode)
+    canvas.addEventListener('click', addEdge)
     canvas.addEventListener('mousedown', dragStart)
     document.querySelectorAll('input').forEach(b => 
         b.addEventListener('change', function(){

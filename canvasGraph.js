@@ -45,23 +45,21 @@ function withinDist(x, y, d){
 }
 
 function removeNode(e){
-    if(btnState == 'removeNode'){
-        let [x, y] = shiftXY(e.x, e.y)
-        let nIdx = withinDist(x, y, RADIUS)
-        if(nIdx != -1){
-            nodes.splice(nIdx, 1)
-            drawGraph()
-        }   
-    }
+    if(btnState != 'removeNode') return
+    let [x, y] = shiftXY(e.x, e.y)
+    let nIdx = withinDist(x, y, RADIUS)
+    if(nIdx != -1){
+        nodes.splice(nIdx, 1)
+        drawGraph()
+    }   
 }
 
 function addNode(e){
-    if(btnState == 'addNode'){
-        let [x, y] = shiftXY(e.x, e.y)
-        if(withinDist(x, y, 2 * RADIUS) == -1){
-            nodes.push({x, y})
-            drawGraph()
-        }
+    if(btnState != 'addNode') return
+    let [x, y] = shiftXY(e.x, e.y)
+    if(withinDist(x, y, 2 * RADIUS) == -1){
+        nodes.push({x, y})
+        drawGraph()
     }
 }
 
@@ -82,15 +80,14 @@ function addEdge(e){
 }
 
 function dragStart(e){
-    if(btnState == 'moveNode'){
-        let [x, y] = shiftXY(e.x, e.y)
-        let nIdx = withinDist(x, y, RADIUS)
-        if(nIdx != -1){
-            activeNode = nodes[nIdx]
-            canvas.addEventListener('mousemove', drag)
-            canvas.addEventListener('mouseup', dragEnd)
-            canvas.addEventListener('mouseleave', dragEnd)
-        }
+    if(btnState != 'moveNode') return
+    let [x, y] = shiftXY(e.x, e.y)
+    let nIdx = withinDist(x, y, RADIUS)
+    if(nIdx != -1){
+        activeNode = nodes[nIdx]
+        canvas.addEventListener('mousemove', drag)
+        canvas.addEventListener('mouseup', dragEnd)
+        canvas.addEventListener('mouseleave', dragEnd)
     }
 }
 

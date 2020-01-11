@@ -4,11 +4,26 @@ A basic old-fashioned clock, with hands.
 window.addEventListener('load', main)
 
 let canvas, context, R
+let secondHand, minuteHand, hourHand
+
+function createHourHand(head, tail, width, color){
+    return function(hours, minutes){
+        let angle = 2*Math.PI * (60*(hours % 12) + minutes) / 720
+        drawHand(head, tail, width, angle, color)
+    }
+}
+
+function createMinuteHand(head, tail, width, color){
+    return function(minutes, seconds){
+        let angle = 2*Math.PI * (60*minutes + seconds) / 3600
+        drawHand(head, tail, width, angle, color)
+    }
+}
 
 function createSecondHand(head, tail, width, color){
-    let range60 = arcRange(60)
     return function(seconds){
-        drawHand(head, tail, width, range60[seconds], color)
+        let angle = 2*Math.PI * seconds / 60
+        drawHand(head, tail, width, angle, color)
     }
 }
 
@@ -62,6 +77,11 @@ function drawTick(r, theta, l, w){
     context.restore()
 }
 
+function drawTicks(){
+    arcRange(12).forEach(x => drawTick(0.9, x, 0.1, 2))
+    arcRange(60).forEach(x => drawTick(0.9, x, 0.05, 1))
+}
+
 function arcRange(n){
     let a = []
     for(let i=0; i < n; i++){
@@ -71,27 +91,44 @@ function arcRange(n){
     return a
 }
 
-function drawTicks(){
-    arcRange(12).forEach(x => drawTick(0.9, x, 0.1, 2))
-    arcRange(60).forEach(x => drawTick(0.9, x, 0.05, 1))
+function clearCanvas(){
+    context.clearRect(-R, -R, 2*R, 2*R)
 }
 
-function main(){
+function drawClock(){
+    clearCanvas()
+    drawTicks()
+    drawNumbers(0.7)
+    let now = new Date()
+    secondHand(now.getSeconds())
+    minuteHand(now.getMinutes(), now.getSeconds())
+    hourHand(now.getHours(), now.getMinutes())
+    drawCenter(0.01)
+}
+
+function makeClock(){
     let iW = window.innerWidth
     let iH = window.innerHeight
-    canvas = document.querySelector('#main > canvas')
-    context = canvas.getContext('2d')
     canvas.width = iW
     canvas.height = iH
     let cx = iW / 2
     let cy = iH / 2
     let D = Math.min(iW, iH)
     R = D / 2
-    context.translate(cx, cy)
     context.textAlign = 'center'
     context.textBaseline = 'middle'
     context.font = `${0.1*R | 0}px sans-serif`
-    drawCenter(0.01)
-    drawTicks()
-    drawNumbers(0.7)
+    context.translate(cx, cy)
+    secondHand = createSecondHand(0.1, 0.5, 0.5, 'red')
+    minuteHand = createMinuteHand(0.15, 0.6, 2, 'black')
+    hourHand = createHourHand(0.1, 0.4, 4, 'black')
+    setInterval(drawClock, 1000)
+    drawClock()
+}
+
+function main(){
+    canvas = document.querySelector('#main > canvas')
+    context = canvas.getContext('2d')
+    window.addEventListener('resize', makeClock)
+    makeClock()
 }

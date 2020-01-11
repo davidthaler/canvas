@@ -1,9 +1,32 @@
 /*
-
+A basic old-fashioned clock, with hands.
 */
 window.addEventListener('load', main)
 
 let canvas, context, R
+
+function createSecondHand(head, tail, width, color){
+    let range60 = arcRange(60)
+    return function(seconds){
+        drawHand(head, tail, width, range60[seconds], color)
+    }
+}
+
+function drawHand(head, tail, width, angle, color){
+    context.save()
+    let prevLW = context.lineWidth
+    let prevColor = context.strokeStyle
+    context.strokeStyle = color
+    context.beginPath()
+    context.lineWidth = width
+    context.rotate(angle)
+    context.moveTo(0, head * R)
+    context.lineTo(0, -tail * R)
+    context.stroke()
+    context.strokeStyle = prevColor
+    context.lineWidth = prevLW
+    context.restore()
+}
 
 function drawNumber(num, theta, r){
     context.save()

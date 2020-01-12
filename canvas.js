@@ -3,7 +3,7 @@ About the simplest sketching program I can think of.
 */
 let canvas, context;
 
-function shiftXY(e){
+function shiftXY(x, y){
     return [x - canvas.offsetLeft, y - canvas.offsetTop + window.scrollY]
 }
 

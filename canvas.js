@@ -44,4 +44,13 @@ window.addEventListener('load', function (){
                 context.lineWidth = this.value ** 2
                 wd.textContent = this.value
             })
+    let println = `window.innerHeight: ${window.innerHeight}
+    window.innerWidth: ${window.innerWidth}
+    window.outerHeight: ${window.outerHeight}
+    window.outerWidth: ${window.outerWidth}
+    canvas.height: ${canvas.height}
+    canvas.width: ${canvas.width}
+    canvas.offsetTop: ${canvas.offsetTop}
+    canvas.offsetLeft: ${canvas.offsetLeft}`
+    document.getElementById('output').textContent = println
 })

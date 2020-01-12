@@ -6,8 +6,7 @@ let canvas, context;
 function getXY(e){
     let x, y
     if(e instanceof TouchEvent){
-        let touch = e.changedTouches[0]
-        [x, y] = [touch.clientX, touch.clientY]
+        [x, y] = e.changedTouches[0]
     }else{
         [x, y] = [e.clientX, e.clientY]
     }

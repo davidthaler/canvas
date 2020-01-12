@@ -8,7 +8,6 @@ function getXY(e){
     if(e instanceof TouchEvent){
         let touch = e.changedTouches[0]
         [x, y] = [touch.clientX, touch.clientY]
-        document.getElementById('println').textContent = `${x}, ${y}`
     }else{
         [x, y] = [e.clientX, e.clientY]
     }

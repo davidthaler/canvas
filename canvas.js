@@ -44,6 +44,8 @@ window.addEventListener('load', function (){
                 context.lineWidth = this.value ** 2
                 wd.textContent = this.value
             })
-    canvas.height = Math.min(window.innerHeight, canvas.height)
-    canvas.width = Math.min(window.innerWidth, canvas.width)
+    canvas.height = Math.min(window.innerHeight, 
+                        window.outerHeight, canvas.height)
+    canvas.width = Math.min(window.innerWidth, 
+                        window.outerHeight, canvas.width)
 })

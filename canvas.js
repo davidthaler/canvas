@@ -8,7 +8,6 @@ function shiftXY(x, y){
 }
 
 function start(e){
-    e.preventDefault()
     context.beginPath()
     let [x, y] = shiftXY(e.x, e.y)
     context.moveTo(x, y)
@@ -16,14 +15,12 @@ function start(e){
 }
 
 function draw(e){
-    e.preventDefault()
     let [x, y] = shiftXY(e.x, e.y)
     context.lineTo(x, y)
     context.stroke()
 }
 
 function end(e){
-    e.preventDefault()
     context.closePath()
     canvas.removeEventListener('mousemove', draw)
 }
@@ -44,8 +41,4 @@ window.addEventListener('load', function (){
                 context.lineWidth = this.value ** 2
                 wd.textContent = this.value
             })
-    canvas.height = Math.min(window.innerHeight, 
-                        window.outerHeight, canvas.height)
-    canvas.width = Math.min(window.innerWidth, 
-                        window.outerHeight, canvas.width)
 })

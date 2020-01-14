@@ -145,8 +145,8 @@ function drawTick(angle, tickSpec){
 }
 
 function drawTicks(){
-    arcRange(12).forEach(angle => drawTick(angle, clockSpec.majorTick))
     arcRange(60).forEach(angle => drawTick(angle, clockSpec.minorTick))
+    arcRange(12).forEach(angle => drawTick(angle, clockSpec.majorTick))
 }
 
 function arcRange(n){

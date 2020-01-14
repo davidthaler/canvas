@@ -63,6 +63,11 @@ const clockSpec = {
         length: 0.05,
         lineWidth: 1,
         color: 'black'
+    },
+    center:{
+        display:true,
+        radius: 0.01,
+        color: 'black'
     }
 }
 function createHourHand(){
@@ -113,9 +118,11 @@ function drawNumbers(r){
     arcRange(12).forEach((theta, i) => drawNumber(numbers[i], theta, r))
 }
 
-function drawCenter(r){
+function drawCenter(){
+    if(!clockSpec.center.display) return
     context.beginPath()
-    context.arc(0, 0, r * R, 0, 2 * Math.PI)
+    context.fillStyle = clockSpec.center.color
+    context.arc(0, 0, clockSpec.center.radius * R, 0, 2 * Math.PI)
     context.fill()
 }
 
@@ -154,7 +161,7 @@ function drawClock(){
     secondHand(now.getSeconds())
     minuteHand(now.getMinutes(), now.getSeconds())
     hourHand(now.getHours(), now.getMinutes())
-    drawCenter(0.01)
+    drawCenter()
 }
 
 function makeClock(){

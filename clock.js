@@ -1,43 +1,87 @@
 /*
-A basic old-fashioned clock, with hands.
+Clock. A simple old-fashioned clock with hands.
+
+The details...not so simple or old-fashioned.
+
+1. Relative dimensioning. To get the clock to display at a variety of sizes,
+we center it on the screen, and then define a length scale, R, which is half 
+of the smaller side length. Most dimensions on the clock are ratios of R, and 
+are in [0, 1].
+
+2. Origin transformation. When the clock is first made, the origin of the canvas
+coordinates is shifted to the display center point, with +y pointing straight down.
+
+3. Save/restore. Every function starts with the origin at the screen center. 
+Every function should return with the origin back at the center. So save() before 
+doing any transforms and restore() after.
+
+4. Stomping on strokeStyle, fillStyle and lineWidth is ok. Subsequent code shouldn't 
+assume anything about those values. If you use them, set them to the values that you need.
+
+Branch clockSpec.
+We have to get all of the magic numbers out of here.
+They will be incomprehensible to anyone else, or to me later.
+
+I'm going to put them into a clockSpec object with all of the program data.
+Then we can comment that, and use descriptive names
 */
 let canvas, context, R
 let secondHand, minuteHand, hourHand
 
-function createHourHand(head, tail, width, color){
+const clockSpec = {
+    secondHand:{
+        display: true,
+        length: 0.5,
+        overhang: 0.1,
+        lineWidth: 0.5,
+        color: 'red'
+    },
+    minuteHand:{
+        display: true,
+        length: 0.6,
+        overhang: 0.15,
+        lineWidth: 2,
+        color:'black'
+    },
+    hourHand:{
+        display: true,
+        length: 0.4,
+        overhang: 0.1,
+        lineWidth: 4,
+        color:'black'
+    }
+}
+function createHourHand(){
     return function(hours, minutes){
         let angle = 2*Math.PI * (60*(hours % 12) + minutes) / 720
-        drawHand(head, tail, width, angle, color)
+        drawHand(angle, clockSpec.hourHand)
     }
 }
 
-function createMinuteHand(head, tail, width, color){
+function createMinuteHand(){
     return function(minutes, seconds){
         let angle = 2*Math.PI * (60*minutes + seconds) / 3600
-        drawHand(head, tail, width, angle, color)
+        drawHand(angle, clockSpec.minuteHand)
     }
 }
 
-function createSecondHand(head, tail, width, color){
+function createSecondHand(){
     return function(seconds){
         let angle = 2*Math.PI * seconds / 60
-        drawHand(head, tail, width, angle, color)
+        drawHand(angle, clockSpec.secondHand)
     }
 }
 
-function drawHand(head, tail, width, angle, color){
+function drawHand(angle, handSpec){
+    if(!handSpec.display) return
     context.save()
-    let prevLW = context.lineWidth
-    let prevColor = context.strokeStyle
-    context.strokeStyle = color
+    context.strokeStyle = handSpec.color
+    context.lineWidth = handSpec.lineWidth
     context.beginPath()
-    context.lineWidth = width
     context.rotate(angle)
-    context.moveTo(0, head * R)
-    context.lineTo(0, -tail * R)
+    context.moveTo(0, handSpec.overhang * R)
+    context.lineTo(0, -handSpec.length * R)
     context.stroke()
-    context.strokeStyle = prevColor
-    context.lineWidth = prevLW
     context.restore()
 }
 
@@ -112,9 +156,9 @@ function makeClock(){
     context.textBaseline = 'middle'
     context.font = `${0.1*R | 0}px sans-serif`
     context.translate(cx, cy)
-    secondHand = createSecondHand(0.1, 0.5, 0.5, 'red')
-    minuteHand = createMinuteHand(0.15, 0.6, 2, 'black')
-    hourHand = createHourHand(0.1, 0.4, 4, 'black')
+    secondHand = createSecondHand()
+    minuteHand = createMinuteHand()
+    hourHand = createHourHand()
     setInterval(drawClock, 1000)
     drawClock()
 }

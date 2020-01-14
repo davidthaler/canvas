@@ -1,8 +1,6 @@
 /*
 A basic old-fashioned clock, with hands.
 */
-window.addEventListener('load', main)
-
 let canvas, context, R
 let secondHand, minuteHand, hourHand
 
@@ -63,7 +61,6 @@ function drawCenter(r){
     context.fill()
 }
 
-// for now, we draw one tick at 12 o'clock
 function drawTick(r, theta, l, w){
     context.save()
     let oldW = context.lineWidth
@@ -83,12 +80,8 @@ function drawTicks(){
 }
 
 function arcRange(n){
-    let a = []
-    for(let i=0; i < n; i++){
-        a.push(i)
-    }
-    a = a.map(x => 2 * Math.PI * x / n)
-    return a
+    let a = Array(n).fill(0).map((_, i) => i)
+    return a.map(x => 2 * Math.PI * x / n)
 }
 
 function clearCanvas(){
@@ -125,10 +118,10 @@ function makeClock(){
     setInterval(drawClock, 1000)
     drawClock()
 }
-
-function main(){
+ 
+ window.addEventListener('load', function(){
     canvas = document.querySelector('#main > canvas')
     context = canvas.getContext('2d')
     window.addEventListener('resize', makeClock)
     makeClock()
-}
+})

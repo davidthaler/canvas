@@ -49,6 +49,20 @@ const clockSpec = {
         overhang: 0.1,
         lineWidth: 4,
         color:'black'
+    },
+    majorTick:{
+        display:true,
+        outerRadius: 0.9,
+        length: 0.1,
+        lineWidth: 2,
+        color: 'black'
+    },
+    minorTick:{
+        display:true,
+        outerRadius: 0.9,
+        length: 0.05,
+        lineWidth: 1,
+        color: 'black'
     }
 }
 function createHourHand(){
@@ -105,22 +119,22 @@ function drawCenter(r){
     context.fill()
 }
 
-function drawTick(r, theta, l, w){
+function drawTick(angle, tickSpec){
+    if(!tickSpec.display) return
     context.save()
-    let oldW = context.lineWidth
-    context.lineWidth = w
-    context.rotate(-theta)
+    context.lineWidth = tickSpec.lineWidth
+    context.strokeStyle = tickSpec.color
+    context.rotate(-angle)
     context.beginPath()
-    context.moveTo(0, R * (r-l))
-    context.lineTo(0, R * r)
+    context.moveTo(0, R * (tickSpec.outerRadius - tickSpec.length))
+    context.lineTo(0, R * tickSpec.outerRadius)
     context.stroke()
-    context.lineWidth = oldW
     context.restore()
 }
 
 function drawTicks(){
-    arcRange(12).forEach(x => drawTick(0.9, x, 0.1, 2))
-    arcRange(60).forEach(x => drawTick(0.9, x, 0.05, 1))
+    arcRange(12).forEach(angle => drawTick(angle, clockSpec.majorTick))
+    arcRange(60).forEach(angle => drawTick(angle, clockSpec.minorTick))
 }
 
 function arcRange(n){

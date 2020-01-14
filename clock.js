@@ -46,8 +46,8 @@ const clockSpec = {
     majorTick:{
         display: true,
         outerRadius: 0.9,
-        length: 0.1,
-        lineWidth: 2,
+        length: 0.075,
+        lineWidth: 1,
         color: 'black'
     },
     minorTick:{

@@ -16,14 +16,7 @@ Every function should return with the origin back at the center. So save() befor
 doing any transforms and restore() after.
 
 4. Stomping on strokeStyle, fillStyle and lineWidth is ok. Subsequent code shouldn't 
-assume anything about those values. If you use them, set them to the values that you need.
-
-Branch clockSpec.
-We have to get all of the magic numbers out of here.
-They will be incomprehensible to anyone else, or to me later.
-
-I'm going to put them into a clockSpec object with all of the program data.
-Then we can comment that, and use descriptive names
+assume anything about those, it should set them to the values needed.
 */
 let canvas, context, R
 let secondHand, minuteHand, hourHand
@@ -31,45 +24,54 @@ let secondHand, minuteHand, hourHand
 const clockSpec = {
     secondHand:{
         display: true,
-        length: 0.5,
-        overhang: 0.1,
+        length: 0.5,            // dist from clock pivot to tip
+        overhang: 0.1,          // dist from pivot to other end
         lineWidth: 0.5,
         color: 'red'
     },
     minuteHand:{
         display: true,
-        length: 0.6,
-        overhang: 0.15,
+        length: 0.7,
+        overhang: 0.175,
         lineWidth: 2,
         color:'black'
     },
     hourHand:{
         display: true,
-        length: 0.4,
-        overhang: 0.1,
+        length: 0.5,
+        overhang: 0.125,
         lineWidth: 4,
         color:'black'
     },
     majorTick:{
-        display:true,
+        display: true,
         outerRadius: 0.9,
         length: 0.1,
         lineWidth: 2,
         color: 'black'
     },
     minorTick:{
-        display:true,
+        display: true,
         outerRadius: 0.9,
         length: 0.05,
         lineWidth: 1,
-        color: 'black'
+        color: 'gray'
     },
     center:{
-        display:true,
-        radius: 0.01,
+        display: true,
+        radius: 0.025,
+        color: 'black'
+    },
+    numbers:{
+        display: true,
+        numbers: [12,1,2,3,4,5,6,7,8,9,10,11],
+        centerRadius: 0.7,
+        font: 'avenir, sans-serif',
+        fontSize: 0.1,
         color: 'black'
     }
 }
+
 function createHourHand(){
     return function(hours, minutes){
         let angle = 2*Math.PI * (60*(hours % 12) + minutes) / 720
@@ -104,18 +106,21 @@ function drawHand(angle, handSpec){
     context.restore()
 }
 
-function drawNumber(num, theta, r){
+// DATA: font, font-size
+function drawNumber(num, theta){
     context.save()
     context.rotate(theta)
-    context.translate(0,  - r * R)
+    context.translate(0,  -clockSpec.numbers.centerRadius * R)
     context.rotate(-theta)
     context.fillText(num, 0, 0)
     context.restore()
 }
 
-function drawNumbers(r){
-    const numbers = [12,1,2,3,4,5,6,7,8,9,10,11]
-    arcRange(12).forEach((theta, i) => drawNumber(numbers[i], theta, r))
+function drawNumbers(){
+    let nums = clockSpec.numbers.numbers
+    context.fillStyle = clockSpec.numbers.color
+    context.font = `${clockSpec.numbers.fontSize * R | 0}px ${clockSpec.numbers.font}`
+    arcRange(nums.length).forEach((theta, i) => drawNumber(nums[i], theta))
 }
 
 function drawCenter(){
@@ -156,7 +161,7 @@ function clearCanvas(){
 function drawClock(){
     clearCanvas()
     drawTicks()
-    drawNumbers(0.7)
+    drawNumbers()
     let now = new Date()
     secondHand(now.getSeconds())
     minuteHand(now.getMinutes(), now.getSeconds())
@@ -175,7 +180,6 @@ function makeClock(){
     R = D / 2
     context.textAlign = 'center'
     context.textBaseline = 'middle'
-    context.font = `${0.1*R | 0}px sans-serif`
     context.translate(cx, cy)
     secondHand = createSecondHand()
     minuteHand = createMinuteHand()

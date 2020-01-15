@@ -117,6 +117,7 @@ function drawNumber(num, theta){
 }
 
 function drawNumbers(){
+    if(!clockSpec.numbers.display) return
     let nums = clockSpec.numbers.numbers
     context.fillStyle = clockSpec.numbers.color
     context.font = `${clockSpec.numbers.fontSize * R | 0}px ${clockSpec.numbers.font}`

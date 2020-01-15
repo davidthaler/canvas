@@ -69,6 +69,14 @@ const clockSpec = {
         font: 'avenir, sans-serif',
         fontSize: 0.1,
         color: 'black'
+    },
+    fullBackground:{
+        display: false,
+        color: 'white'
+    },
+    squareBackground:{
+        display: true,
+        color: 'white'
     }
 }
 
@@ -150,17 +158,33 @@ function drawTicks(){
     arcRange(12).forEach(angle => drawTick(angle, clockSpec.majorTick))
 }
 
+function drawSquareBackground(){
+    if(!clockSpec.squareBackground.display) return
+    context.fillStyle = clockSpec.squareBackground.color
+    context.fillRect(-R, -R, 2*R, 2*R)
+}
+
+function drawFullBackground(){
+    if(!clockSpec.fullBackground.display) return
+    let geom = doGeometry()
+    context.fillStyle = clockSpec.fullBackground.color
+    context.fillRect(-geom.cx, -geom.cy, geom.iW, geom.iH)
+}
+
 function arcRange(n){
     let a = Array(n).fill(0).map((_, i) => i)
     return a.map(x => 2 * Math.PI * x / n)
 }
 
 function clearCanvas(){
-    context.clearRect(-R, -R, 2*R, 2*R)
+    let geom = doGeometry()
+    context.clearRect(-geom.cx, -geom.cy, geom.iW, geom.iH)
 }
 
 function drawClock(){
     clearCanvas()
+    drawFullBackground()
+    drawSquareBackground()
     drawTicks()
     drawNumbers()
     let now = new Date()
@@ -170,18 +194,24 @@ function drawClock(){
     drawCenter()
 }
 
-function makeClock(){
+function doGeometry(){
     let iW = window.innerWidth
     let iH = window.innerHeight
-    canvas.width = iW
-    canvas.height = iH
     let cx = iW / 2
     let cy = iH / 2
-    let D = Math.min(iW, iH)
-    R = D / 2
+    let diam = Math.min(iW, iH)
+    radius = diam / 2
+    return {radius, cx, cy, iW, iH}
+}
+
+function makeClock(){
+    let geom = doGeometry()
+    R = geom.radius
+    canvas.width = geom.iW
+    canvas.height = geom.iH
     context.textAlign = 'center'
     context.textBaseline = 'middle'
-    context.translate(cx, cy)
+    context.translate(geom.cx, geom.cy)
     secondHand = createSecondHand()
     minuteHand = createMinuteHand()
     hourHand = createHourHand()

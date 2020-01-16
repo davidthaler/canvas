@@ -14,7 +14,6 @@ function start(e){
     context.beginPath()
     context.moveTo(x, y)
     time = Date.now()
-    console.log('start')
 }
 
 function draw(e){
@@ -25,7 +24,6 @@ function draw(e){
         context.lineTo(x, y)
         context.stroke()
         time += timeDiff
-        console.log(`to(${x},${y}) @${time}`)
     }
 }
 

@@ -1,8 +1,7 @@
 /*
-A very basic drawing-on-mobile
+A very basic drawing-on-mobile app.
 */
-let canvas, context, time
-const MINMILLIS = 20
+let canvas, context
 
 function shiftXY(e){
     return [e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop]
@@ -13,18 +12,13 @@ function start(e){
     let [x, y] = shiftXY(e.touches[0])
     context.beginPath()
     context.moveTo(x, y)
-    time = Date.now()
 }
 
 function draw(e){
     e.preventDefault()
-    let timeDiff = Date.now() - time 
-    if(timeDiff > MINMILLIS){
-        let [x, y] = shiftXY(e.touches[0])
-        context.lineTo(x, y)
-        context.stroke()
-        time += timeDiff
-    }
+    let [x, y] = shiftXY(e.touches[0])
+    context.lineTo(x, y)
+    context.stroke()
 }
 
 window.addEventListener('load', function(){

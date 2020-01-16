@@ -77,6 +77,12 @@ const clockSpec = {
     squareBackground:{
         display: true,
         color: 'white'
+    },
+    bezel:{
+        display: true,
+        innerRadius: 0.9,
+        width: 0.05,
+        color: 'black'
     }
 }
 
@@ -114,7 +120,6 @@ function drawHand(angle, handSpec){
     context.restore()
 }
 
-// DATA: font, font-size
 function drawNumber(num, theta){
     context.save()
     context.rotate(theta)
@@ -158,6 +163,18 @@ function drawTicks(){
     arcRange(12).forEach(angle => drawTick(angle, clockSpec.majorTick))
 }
 
+function drawBezel(){
+    if(!clockSpec.bezel.display) return
+    context.fillStyle = clockSpec.bezel.color
+    context.beginPath()
+    context.moveTo(clockSpec.bezel.innerRadius * R, 0)
+    context.arc(0, 0, clockSpec.bezel.innerRadius * R, 0, 2 * Math.PI)
+    // Have to change either the arc direction or the fill rule.
+    context.arc(0, 0, (clockSpec.bezel.innerRadius + clockSpec.bezel.width) * R,
+                0, 2 * Math.PI, true)
+    context.fill()
+}
+
 function drawSquareBackground(){
     if(!clockSpec.squareBackground.display) return
     context.fillStyle = clockSpec.squareBackground.color
@@ -186,6 +203,7 @@ function drawClock(){
     drawFullBackground()
     drawSquareBackground()
     drawTicks()
+    drawBezel()
     drawNumbers()
     let now = new Date()
     secondHand(now.getSeconds())

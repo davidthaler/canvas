@@ -11,12 +11,8 @@ are in [0, 1].
 2. Origin transformation. When the clock is first made, the origin of the canvas
 coordinates is shifted to the display center point, with +y pointing straight down.
 
-3. Save/restore. Every function starts with the origin at the screen center. 
-Every function should return with the origin back at the center. So save() before 
-doing any transforms and restore() after.
-
-4. Stomping on strokeStyle, fillStyle and lineWidth is ok. Subsequent code shouldn't 
-assume anything about those, it should set them to the values needed.
+3. Leave things where you found them... Every function that alters the context state 
+calls save() before doing any transforms and restore() after.
 */
 let canvas, context, R
 let secondHand, minuteHand, hourHand
@@ -131,18 +127,22 @@ function drawNumber(num, theta){
 
 function drawNumbers(){
     if(!clockSpec.numbers.display) return
+    context.save()
     let nums = clockSpec.numbers.numbers
     context.fillStyle = clockSpec.numbers.color
     context.font = `${clockSpec.numbers.fontSize * R | 0}px ${clockSpec.numbers.font}`
     arcRange(nums.length).forEach((theta, i) => drawNumber(nums[i], theta))
+    context.restore()
 }
 
 function drawCenter(){
     if(!clockSpec.center.display) return
+    context.save()
     context.beginPath()
     context.fillStyle = clockSpec.center.color
     context.arc(0, 0, clockSpec.center.radius * R, 0, 2 * Math.PI)
     context.fill()
+    context.restore()
 }
 
 function drawTick(angle, tickSpec){
@@ -165,27 +165,33 @@ function drawTicks(){
 
 function drawBezel(){
     if(!clockSpec.bezel.display) return
+    context.save()
     context.fillStyle = clockSpec.bezel.color
     context.beginPath()
     context.moveTo(clockSpec.bezel.innerRadius * R, 0)
     context.arc(0, 0, clockSpec.bezel.innerRadius * R, 0, 2 * Math.PI)
-    // Have to change either the arc direction or the fill rule.
+    // Must change the arc direction or the fill rule to fill between arcs
     context.arc(0, 0, (clockSpec.bezel.innerRadius + clockSpec.bezel.width) * R,
                 0, 2 * Math.PI, true)
     context.fill()
+    context.restore()
 }
 
 function drawSquareBackground(){
     if(!clockSpec.squareBackground.display) return
+    context.save()
     context.fillStyle = clockSpec.squareBackground.color
     context.fillRect(-R, -R, 2*R, 2*R)
+    context.restore()
 }
 
 function drawFullBackground(){
     if(!clockSpec.fullBackground.display) return
+    context.save()
     let geom = doGeometry()
     context.fillStyle = clockSpec.fullBackground.color
     context.fillRect(-geom.cx, -geom.cy, geom.iW, geom.iH)
+    context.restore()
 }
 
 function arcRange(n){

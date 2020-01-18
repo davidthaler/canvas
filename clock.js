@@ -79,9 +79,9 @@ const clockSpec = {
         color: 'white'
     },
     bezel:{
-        display: true,
+        display: false,
         innerRadius: 0.9,
-        width: 0.05,
+        width: 0.02,
         color: 'black'
     }
 }
@@ -213,8 +213,9 @@ function drawClock(){
 }
 
 function doGeometry(){
-    let iW = window.innerWidth
-    let iH = window.innerHeight
+    let main = document.getElementById('main')
+    let iW = main.clientWidth
+    let iH = Math.min(main.clientHeight, window.innerHeight)
     let cx = iW / 2
     let cy = iH / 2
     let diam = Math.min(iW, iH)

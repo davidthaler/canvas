@@ -1,5 +1,6 @@
 /*
-About the simplest sketching program I can think of.
+A simple sketching program that lets you load a background image from 
+your file systemto doodle on. Can also select line color and width.
 */
 let canvas, context;
 
@@ -43,4 +44,33 @@ window.addEventListener('load', function (){
             })
     canvas.height = Math.min(window.innerHeight, canvas.height)
     canvas.width = Math.min(window.innerWidth, canvas.width)
+
+    let imagePicker = document.getElementById('imagePicker')
+    document.getElementById('chooseImage')
+            .addEventListener('click', function(){
+                imagePicker.click()
+            })
+
+    imagePicker.addEventListener('change', function(){
+        if(this.files.length == 0){
+            console.log('File picker closed with no files selected')
+            return
+        }
+        let f = this.files[0]
+        if(f.type.startsWith('image')){
+            let img = document.createElement('img')
+            let reader = new FileReader()
+            reader.addEventListener('load', function(){
+                img.src = reader.result
+                img.addEventListener('load', function(){
+                    canvas.height = img.height
+                    canvas.width = img.width
+                    context.drawImage(img, 0, 0)
+                })
+            })
+            reader.readAsDataURL(f)
+        }else{
+            console.error(`Cannot load as image:${f.name} type:${f.type}`)
+        }
+    })
 })

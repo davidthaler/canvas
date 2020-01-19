@@ -3,7 +3,7 @@ A simple sketching program that lets you load a background image from
 your file system to doodle on. Can also select line color and width.
 Has basic undo functionality.
 */
-let canvas, context;
+let canvas, context, img;
 let datalog = [];
 
 function shiftXY(x, y){
@@ -39,7 +39,10 @@ function end(e){
 }
 
 function redraw(){
-    clearCanvas()
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    if(img){
+        context.drawImage(img, 0, 0)
+    }
     for(let path of datalog){
         context.strokeStyle = path.color
         context.lineWidth = path.lineWidth
@@ -54,6 +57,12 @@ function redraw(){
     }
 }
 
+function reset(){
+    img = undefined
+    datalog = []
+    context.clearRect(0, 0, canvas.width, canvas.height)
+}
+
 function keydown(e){
     if(e.key != 'Backspace') return
     datalog.pop()
@@ -64,10 +73,6 @@ function keydown(e){
 
 function keyup(e){
     window.addEventListener('keydown', keydown)
-}
-
-function clearCanvas(){
-    context.clearRect(0, 0, canvas.width, canvas.height)
 }
 
 window.addEventListener('load', function (){
@@ -104,7 +109,7 @@ window.addEventListener('load', function (){
         }
         let f = this.files[0]
         if(f.type.startsWith('image')){
-            let img = document.createElement('img')
+            img = document.createElement('img')
             let reader = new FileReader()
             reader.addEventListener('load', function(){
                 img.src = reader.result

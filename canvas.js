@@ -1,11 +1,19 @@
 /*
 A simple sketching program that lets you load a background image from 
-your file systemto doodle on. Can also select line color and width.
+your file system to doodle on. Can also select line color and width.
+Has basic undo functionality.
 */
 let canvas, context;
+let datalog = [];
 
 function shiftXY(x, y){
     return [x - canvas.offsetLeft, y - canvas.offsetTop + window.scrollY]
+}
+
+function addPoint(x, y){
+    let path = datalog[datalog.length - 1]
+    path.points.x.push(x)
+    path.points.y.push(y)
 }
 
 function start(e){
@@ -13,17 +21,53 @@ function start(e){
     let [x, y] = shiftXY(e.x, e.y)
     context.moveTo(x, y)
     canvas.addEventListener('mousemove', draw)
+    datalog.push({'color':context.strokeStyle, 
+                    'lineWidth':context.lineWidth, 
+                    'points':{'x':[x], 'y':[y]}})
 }
 
 function draw(e){
     let [x, y] = shiftXY(e.x, e.y)
     context.lineTo(x, y)
     context.stroke()
+    addPoint(x, y)
 }
 
 function end(e){
     context.closePath()
     canvas.removeEventListener('mousemove', draw)
+}
+
+function redraw(){
+    clearCanvas()
+    for(let path of datalog){
+        context.strokeStyle = path.color
+        context.lineWidth = path.lineWidth
+        let x = path.points.x
+        let y = path.points.y
+        context.beginPath()
+        context.moveTo(x[0], y[0])
+        for(let i=1; i < x.length; i++){
+            context.lineTo(x[i], y[i])
+        }
+        context.stroke()
+    }
+}
+
+function keydown(e){
+    if(e.key != 'Backspace') return
+    datalog.pop()
+    redraw()
+    window.addEventListener('keyup', keyup)
+    window.removeEventListener('keydown', keydown)
+}
+
+function keyup(e){
+    window.addEventListener('keydown', keydown)
+}
+
+function clearCanvas(){
+    context.clearRect(0, 0, canvas.width, canvas.height)
 }
 
 window.addEventListener('load', function (){
@@ -44,6 +88,8 @@ window.addEventListener('load', function (){
             })
     canvas.height = Math.min(window.innerHeight, canvas.height)
     canvas.width = Math.min(window.innerWidth, canvas.width)
+
+    window.addEventListener('keydown', keydown)
 
     let imagePicker = document.getElementById('imagePicker')
     document.getElementById('chooseImage')

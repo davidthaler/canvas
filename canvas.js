@@ -60,6 +60,8 @@ function redraw(){
 function reset(){
     img = undefined
     datalog = []
+    // Without this, no change event fires when selecting image we just erased
+    document.getElementById('imagePicker').value = ''
     context.clearRect(0, 0, canvas.width, canvas.height)
 }
 
@@ -95,6 +97,7 @@ window.addEventListener('load', function (){
     canvas.width = Math.min(window.innerWidth, canvas.width)
 
     window.addEventListener('keydown', keydown)
+    document.getElementById('clearAll').addEventListener('click', reset)
 
     let imagePicker = document.getElementById('imagePicker')
     document.getElementById('chooseImage')
@@ -114,9 +117,13 @@ window.addEventListener('load', function (){
             reader.addEventListener('load', function(){
                 img.src = reader.result
                 img.addEventListener('load', function(){
+                    let oldColor = context.strokeStyle
+                    let oldLW = context.lineWidth
                     canvas.height = img.height
                     canvas.width = img.width
                     context.drawImage(img, 0, 0)
+                    context.strokeStyle = oldColor
+                    context.lineWidth = oldLW
                 })
             })
             reader.readAsDataURL(f)

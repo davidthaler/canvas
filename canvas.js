@@ -124,6 +124,7 @@ window.addEventListener('load', function (){
                     context.drawImage(img, 0, 0)
                     context.strokeStyle = oldColor
                     context.lineWidth = oldLW
+                    datalog = []
                 })
             })
             reader.readAsDataURL(f)
